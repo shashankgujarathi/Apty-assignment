@@ -1,165 +1,165 @@
-# Mini Apty – Simple Overview (For Quick Understanding & Demo)
+# Mini Apty – Simple Overview
 
-## What this project is
+## What is Mini Apty?
 
-Mini Apty is a Chrome Extension that helps you create and play **step-by-step walkthroughs on any website**.
+Mini Apty is a Chrome extension that lets you record and replay step-by-step guides on any website.
 
-It has 3 main parts:
+Example:
+Click here → then here → then fill this — all shown directly on the website.
 
-* **Extension (Frontend)** → Runs inside browser (UI + overlay)
-* **Backend** → Stores users, walkthroughs, steps
-* **Shared package** → Common types between frontend & backend
+--------------------------------------------------------------------------------------------------------------
 
----
+## How it works 
 
-## How the system works (simple flow)
+1. You click Start Recording
+2. The extension tracks what you click
+3. Each step gets saved
+4. You save the walkthrough (sent to backend)
+5. Later, you play it
+6. The extension guides you step-by-step on the page
 
-1. User clicks **Start Recording** from extension popup
-2. Extension starts capturing clicks on the page
-3. Each step is saved (with selectors + path)
-4. User saves walkthrough → sent to backend
-5. Later, user plays walkthrough
-6. Extension finds elements and shows tooltips step-by-step
+-------------------------------------------------------------------------------------------------------------
 
----
+## Main parts of the system
 
-## Key Architecture (very important)
+### 1. Chrome Extension (Frontend)
 
-### 1. Extension has 3 parts
+This has 3 main pieces:
 
-* **Popup** → small UI (login, start/stop)
-* **Content Script** → runs inside webpage (detects clicks, shows UI)
-* **Service Worker** → background logic (state + messaging)
+* Popup → where you log in and start/stop recording
+* Content Script → runs inside the website (tracks clicks, shows tooltips)
+* Service Worker → handles background logic and communication
 
-These 3 **cannot directly talk to each other**, so they use:
+These parts can’t talk directly, so they use messaging like:
 
 * `chrome.runtime.sendMessage`
 * `chrome.tabs.sendMessage`
 
 ---
 
-### 2. State handling (very important)
+### 2. Backend
 
-We DO NOT store state in memory because:
+Stores:
 
-* Service worker can stop anytime
+* Users
+* Walkthroughs
+* Steps
+
+---
+
+### 3. Shared Package
+
+Contains common types used by both frontend and backend.
+
+---
+
+## concepts used in the project
+
+### State handling
+
+We don’t store data in memory because the extension can shut down anytime.
 
 So we use:
 
-```txt
 chrome.storage.local
-```
 
-We store:
+This stores things like:
 
-* recordingState
-* previewState
-* token (auth)
+* recording state
+* preview state
+* login token
 
----
+-------------------------------------------------------------------------------------------------------------
 
-### 3. Selector strategy (core logic)
+### How we identify elements 
 
-When user clicks an element, we don’t store just one selector.
+When you click something, we don’t rely on just one selector.
 
-We store multiple:
+We save multiple options:
 
-1. data-testid (best)
-2. id
-3. class
-4. tag
-5. xpath
+* data-testid (best)
+* id
+* class
+* tag
+* xpath
 
-Why?
-Because DOM changes — we need fallback options.
+ Why? Because websites reloads/changes, Dom gets changed — this gives us backup options.
 
----
+-------------------------------------------------------------------------------------------------------------
 
-### 4. Preview mode (smart part)
+### Playing a walkthrough (Preview mode)
 
-When playing a walkthrough:
+When replaying steps:
 
-* We search multiple elements
-* Score them based on match
-* Pick best match
+* We try multiple selectors
+* Score matches
+* Pick the best one
 
 Also handles:
 
-* React SPA loading delays (MutationObserver)
-* Element re-renders
+* React delays (using MutationObserver)
+* UI re-renders
 
----
+-------------------------------------------------------------------------------------------------------------
 
-### 5. Navigation handling
+### Page navigation
 
-If next step is on another page:
+If the next step is on another page:
 
 * We redirect using:
 
-```js
 window.location.href
-```
 
-Then:
+After reload:
 
-* Page reloads
-* Extension resumes from storage
+* The extension resumes from saved state
 
----
+-------------------------------------------------------------------------------------------------------------
 
-### 6. Overlay system
+### Overlay UI
 
-We inject UI into page using:
+We inject our UI into the page using Shadow DOM
 
-```txt
-Shadow DOM
-```
-
-Why?
-
-* Prevent site CSS from breaking our UI
-* Prevent our styles from affecting site
+Reason:-
+* Website styles won’t break our UI
+* Our styles won’t affect the website
 
 ---
 
-### 7. Offline handling
+### Offline support
 
 If backend is down:
 
-* Steps are stored locally (offline queue)
-* Background sync runs every 1 min
-* Data syncs when backend is back
+* Steps are saved locally
+* Sync runs every minute
+* Data is sent when backend is back
 
 ---
 
-## Folder structure (simple view)
+## Project structure
 
 ```
 packages/
-  backend/     → APIs + DB
+  backend/     → APIs + database
   extension/   → Chrome extension
-  shared/      → types & schemas
+  shared/      → common types
 ```
 
 ---
 
-## How to run the project
+## How to run it
 
 ### Start backend
 
-```bash
 pnpm dev:backend
-```
 
 ### Build extension
 
-```bash
 pnpm build
-```
 
-### Load extension
+### Load extension in Chrome
 
-1. Go to chrome://extensions
-2. Enable Developer Mode
-3. Click "Load unpacked"
+1. Go to `chrome://extensions`
+2. Turn on Developer Mode
+3. Click Load unpacked
 4. Select `/packages/extension/dist`
