@@ -7,7 +7,7 @@ function queryCandidates(selectors: ElementSelectors): HTMLElement[] {
   if (!selectors) return [];
 
   try {
-    // 1. Check data attributes (highest specificity)
+
     if (selectors.dataAttributes) {
       for (const [key, value] of Object.entries(selectors.dataAttributes)) {
         const elList = document.querySelectorAll<HTMLElement>(`[${key}="${value}"]`);
@@ -15,25 +15,21 @@ function queryCandidates(selectors: ElementSelectors): HTMLElement[] {
       }
     }
 
-    // 2. Check unique ID
     if (selectors.idSelector) {
       const el = document.getElementById(selectors.idSelector.replace('#', ''));
       if (el) candidates.add(el);
     }
 
-    // 3. Check robust CSS selector
     if (selectors.robustSelector) {
       const elList = document.querySelectorAll<HTMLElement>(selectors.robustSelector);
       elList.forEach(el => candidates.add(el));
     }
 
-    // 4. Check class-based selectors
     if (selectors.classSelector) {
       const elList = document.querySelectorAll<HTMLElement>(selectors.classSelector);
       elList.forEach(el => candidates.add(el));
     }
 
-    // 5. Fallback to tag name if set has few candidates
     if (candidates.size === 0 && selectors.tagName) {
       const elList = document.querySelectorAll<HTMLElement>(selectors.tagName.toLowerCase());
       elList.forEach(el => candidates.add(el));
@@ -45,7 +41,6 @@ function queryCandidates(selectors: ElementSelectors): HTMLElement[] {
   return Array.from(candidates);
 }
 
-// Compute positional XPath of an element to compare against step metadata
 function computeXPath(element: HTMLElement): string {
   const paths: string[] = [];
   let current: Node | null = element;
@@ -69,9 +64,8 @@ function computeXPath(element: HTMLElement): string {
   return `/${paths.join('/')}`;
 }
 
-// Main evaluation function
 export function findBestTargetElement(selectors: ElementSelectors): HTMLElement | null {
-  // Defensive parse for stringified JSON returned by database
+
   let parsedSelectors = selectors;
   if (typeof selectors === 'string') {
     try {
@@ -90,27 +84,23 @@ export function findBestTargetElement(selectors: ElementSelectors): HTMLElement 
 
   let bestElement: HTMLElement | null = null;
   let highestScore = 0;
-  const threshold = 0.55; // Must score higher than this to count as a match
+  const threshold = 0.55;
 
   for (const element of candidates) {
-    // Avoid matching hidden elements or elements that are part of our extension UI overlay
     const rect = element.getBoundingClientRect();
     if (rect.width === 0 && rect.height === 0) continue;
     if (element.tagName.startsWith('MINI-APTY') || element.closest('mini-apty-root')) continue;
 
     let score = 0;
 
-    // 1. Tag name check (+0.1)
     if (element.tagName.toUpperCase() === parsedSelectors.tagName.toUpperCase()) {
       score += 0.1;
     }
 
-    // 2. ID match (+0.3)
     if (parsedSelectors.idSelector && `#${element.id}` === parsedSelectors.idSelector) {
       score += 0.3;
     }
 
-    // 3. Custom attributes check (+0.3 max)
     const totalAttrs = Object.keys(parsedSelectors.dataAttributes).length;
     if (totalAttrs > 0) {
       let matchedAttrs = 0;
@@ -122,7 +112,6 @@ export function findBestTargetElement(selectors: ElementSelectors): HTMLElement 
       score += (matchedAttrs / totalAttrs) * 0.3;
     }
 
-    // 4. Classes match (+0.15 max)
     if (parsedSelectors.classSelector) {
       const targetClasses = parsedSelectors.classSelector.split('.').filter(Boolean);
       if (targetClasses.length > 0) {
@@ -136,7 +125,6 @@ export function findBestTargetElement(selectors: ElementSelectors): HTMLElement 
       }
     }
 
-    // 5. Text content matching (+0.25 max)
     if (parsedSelectors.textContent) {
       const elText = element.textContent?.trim() || '';
       if (elText === parsedSelectors.textContent) {
@@ -146,12 +134,10 @@ export function findBestTargetElement(selectors: ElementSelectors): HTMLElement 
       }
     }
 
-    // 6. XPath similarity (+0.4 max)
     const elementXPath = computeXPath(element);
     if (elementXPath === parsedSelectors.positionalXPath) {
       score += 0.4;
     } else {
-      // Partial matching: if paths end with same nodes
       const elementParts = elementXPath.split('/');
       const targetParts = parsedSelectors.positionalXPath.split('/');
       const tailMatchCount = 3;
@@ -168,7 +154,6 @@ export function findBestTargetElement(selectors: ElementSelectors): HTMLElement 
       if (matchedTail) score += 0.2;
     }
 
-    // 7. Robust CSS selector match (+0.3)
     if (parsedSelectors.robustSelector) {
       try {
         if (element.matches(parsedSelectors.robustSelector)) {
@@ -179,7 +164,6 @@ export function findBestTargetElement(selectors: ElementSelectors): HTMLElement 
       }
     }
 
-    // Update champion candidate
     if (score > highestScore) {
       highestScore = score;
       bestElement = element;
