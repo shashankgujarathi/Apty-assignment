@@ -7,7 +7,7 @@ export default defineConfig({
   build: {
     emptyOutDir: true,
     outDir: 'dist',
-    minify: false, // Helps debugging in dev unpacked mode
+    minify: false,
     rollupOptions: {
       input: {
         popup: resolve(__dirname, 'popup.html'),

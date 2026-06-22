@@ -5,7 +5,7 @@ import { resolve } from 'path';
 export default defineConfig({
   plugins: [react()],
   build: {
-    emptyOutDir: false, // Retain popup and background files in dist
+    emptyOutDir: false, 
     outDir: 'dist',
     minify: false,
     lib: {
@@ -17,7 +17,6 @@ export default defineConfig({
     rollupOptions: {
       output: {
         extend: true,
-        // Inline all code without emitting split asset chunks
         assetFileNames: 'assets/[name]-[hash].[ext]',
       },
     },
