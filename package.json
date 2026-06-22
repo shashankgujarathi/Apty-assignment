@@ -1,0 +1,18 @@
+{
+  "name": "mini-apty-monorepo",
+  "version": "1.0.0",
+  "private": true,
+  "description": "Monorepo for Mini Apty chrome extension and Node backend",
+  "scripts": {
+    "build": "pnpm --recursive run build",
+    "dev:backend": "pnpm --filter @mini-apty/backend dev",
+    "dev:extension": "pnpm --filter @mini-apty/extension dev",
+    "db:up": "docker-compose up -d",
+    "db:down": "docker-compose down",
+    "lint": "pnpm --recursive run lint",
+    "clean": "pnpm -r exec rm -rf node_modules dist"
+  },
+  "devDependencies": {
+    "typescript": "^5.3.3"
+  }
+}

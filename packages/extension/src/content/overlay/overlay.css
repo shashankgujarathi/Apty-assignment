@@ -1,0 +1,269 @@
+:host {
+  all: initial;
+  font-family: 'Inter', system-ui, -apple-system, sans-serif;
+  color-scheme: dark;
+}
+
+/* Base styles inside shadow root */
+.apty-overlay-root {
+  color: #f8fafc;
+  font-size: 14px;
+  line-height: 1.5;
+}
+
+/* Focus highlighting box */
+.apty-element-highlight {
+  position: absolute;
+  pointer-events: none;
+  border: 2px dashed #6366f1;
+  background-color: rgba(99, 102, 241, 0.08);
+  border-radius: 4px;
+  z-index: 2147483645;
+  transition: all 0.15s ease-out;
+  box-shadow: 0 0 10px rgba(99, 102, 241, 0.3);
+}
+
+/* Target element selection indicator */
+.apty-element-selected {
+  position: absolute;
+  pointer-events: none;
+  border: 2px solid #10b981;
+  background-color: rgba(16, 185, 129, 0.1);
+  border-radius: 4px;
+  z-index: 2147483646;
+  box-shadow: 0 0 12px rgba(16, 185, 129, 0.5);
+}
+
+/* Floating control bar (Recording mode) */
+.apty-control-bar {
+  position: fixed;
+  bottom: 24px;
+  left: 50%;
+  transform: translateX(-50%);
+  background-color: #0b0f19;
+  border: 1px solid #2e3d60;
+  border-radius: 30px;
+  padding: 10px 24px;
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  z-index: 2147483647;
+  box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.5), 0 0 15px rgba(99, 102, 241, 0.2);
+  min-width: 380px;
+  justify-content: space-between;
+}
+
+.apty-control-info {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.apty-rec-indicator {
+  width: 10px;
+  height: 10px;
+  background-color: #ef4444;
+  border-radius: 50%;
+  animation: pulse 1.5s infinite;
+}
+
+@keyframes pulse {
+  0% { transform: scale(0.9); opacity: 0.6; }
+  50% { transform: scale(1.2); opacity: 1; }
+  100% { transform: scale(0.9); opacity: 0.6; }
+}
+
+.apty-btn-group {
+  display: flex;
+  gap: 8px;
+}
+
+/* Tooltip card (Preview mode) */
+.apty-tooltip-card {
+  position: absolute;
+  background-color: #151e33;
+  border: 1px solid #2e3d60;
+  border-radius: 12px;
+  padding: 18px;
+  width: 300px;
+  z-index: 2147483647;
+  box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.4), 0 0 10px rgba(99, 102, 241, 0.1);
+  display: flex;
+  flex-direction: column;
+}
+
+.apty-tooltip-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 10px;
+}
+
+.apty-step-badge {
+  background-color: rgba(99, 102, 241, 0.2);
+  color: #a5b4fc;
+  font-size: 11px;
+  font-weight: 600;
+  padding: 3px 8px;
+  border-radius: 10px;
+}
+
+.apty-close-btn {
+  background: none;
+  border: none;
+  color: #94a3b8;
+  cursor: pointer;
+  padding: 0;
+  display: flex;
+}
+
+.apty-close-btn:hover {
+  color: #f8fafc;
+}
+
+.apty-tooltip-title {
+  margin: 0 0 8px 0;
+  font-size: 16px;
+  font-weight: 700;
+  color: #f8fafc;
+}
+
+.apty-tooltip-description {
+  margin: 0 0 16px 0;
+  font-size: 13px;
+  color: #cbd5e1;
+}
+
+.apty-tooltip-footer {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  border-top: 1px solid #2e3d60;
+  padding-top: 12px;
+}
+
+.apty-trigger-info {
+  font-size: 11px;
+  color: #94a3b8;
+  font-style: italic;
+}
+
+/* Modals (Step Builder) */
+.apty-modal-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: rgba(11, 15, 25, 0.7);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 2147483647;
+}
+
+.apty-modal-content {
+  background-color: #151e33;
+  border: 1px solid #2e3d60;
+  border-radius: 12px;
+  padding: 24px;
+  width: 380px;
+  box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.6);
+}
+
+.apty-modal-title {
+  margin: 0 0 16px 0;
+  font-size: 18px;
+  font-weight: 700;
+  color: #f8fafc;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.apty-form-group {
+  margin-bottom: 14px;
+}
+
+.apty-form-group label {
+  display: block;
+  font-size: 11px;
+  font-weight: 600;
+  color: #94a3b8;
+  margin-bottom: 6px;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+
+.apty-input, .apty-select, .apty-textarea {
+  width: 100%;
+  background-color: #0b0f19;
+  border: 1px solid #2e3d60;
+  border-radius: 6px;
+  color: #f8fafc;
+  padding: 8px 12px;
+  font-size: 13px;
+  outline: none;
+  font-family: inherit;
+}
+
+.apty-input:focus, .apty-select:focus, .apty-textarea:focus {
+  border-color: #6366f1;
+}
+
+/* General Button Styles inside overlay */
+.apty-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  padding: 6px 12px;
+  font-size: 12px;
+  font-weight: 600;
+  border-radius: 6px;
+  cursor: pointer;
+  border: none;
+  transition: all 0.15s ease;
+}
+
+.apty-btn-primary {
+  background-color: #6366f1;
+  color: white;
+}
+
+.apty-btn-primary:hover {
+  background-color: #4f46e5;
+}
+
+.apty-btn-secondary {
+  background-color: #2e3d60;
+  color: #f8fafc;
+}
+
+.apty-btn-secondary:hover {
+  background-color: #1e2945;
+}
+
+.apty-btn-danger {
+  background-color: #ef4444;
+  color: white;
+}
+
+.apty-btn-danger:hover {
+  background-color: #dc2626;
+}
+
+.apty-btn-warning {
+  background-color: #f59e0b;
+  color: #0b0f19;
+}
+
+.apty-btn-warning:hover {
+  background-color: #d97706;
+}
+
+.apty-btn-sm {
+  padding: 4px 8px;
+  font-size: 11px;
+  border-radius: 4px;
+}

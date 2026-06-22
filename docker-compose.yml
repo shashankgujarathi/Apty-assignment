@@ -1,0 +1,39 @@
+version: '3.8'
+
+services:
+  db:
+    image: mysql:8.0
+    container_name: mini_apty_mysql_app
+    restart: always
+    environment:
+      MYSQL_ROOT_PASSWORD: rootpassword
+      MYSQL_DATABASE: mini_apty
+      MYSQL_USER: apty_user
+      MYSQL_PASSWORD: apty_password
+    ports:
+      - '3306:3306'
+    volumes:
+      - mysql_data:/var/lib/mysql
+
+  backend:
+    build:
+      context: .
+      dockerfile: packages/backend/Dockerfile
+    container_name: mini_apty_backend_app
+    restart: always
+    ports:
+      - '3000:3000'
+    environment:
+      - PORT=3000
+      - NODE_ENV=development
+      - DB_HOST=db
+      - DB_USER=apty_user
+      - DB_PASSWORD=apty_password
+      - DB_NAME=mini_apty
+      - DB_PORT=3306
+      - JWT_SECRET=super_secret_jwt_key_12345!
+    depends_on:
+      - db
+
+volumes:
+  mysql_data:
