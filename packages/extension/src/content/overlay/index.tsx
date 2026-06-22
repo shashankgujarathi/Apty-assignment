@@ -48,18 +48,16 @@ export function setupOverlay(actions: {
     return;
   }
 
-  // Create custom container tag to prevent class leakage
   container = document.createElement('mini-apty-root');
   container.style.position = 'fixed';
   container.style.top = '0';
   container.style.left = '0';
   container.style.width = '100%';
   container.style.height = '100%';
-  container.style.pointerEvents = 'none'; // Ensure clicks pass through to host page unless hovering modal/bar
+  container.style.pointerEvents = 'none';
   container.style.zIndex = '2147483647';
   document.body.appendChild(container);
 
-  // Set up observer to re-append if host page PJAX destroys/unmounts container
   bodyObserver = new MutationObserver(() => {
     if (container && !container.isConnected && document.body) {
       console.log('[Mini Apty] Overlay container detached from DOM. Re-appending...');
@@ -72,15 +70,13 @@ export function setupOverlay(actions: {
 
   shadowRoot = container.attachShadow({ mode: 'open' });
 
-  // Create isolated stylesheet wrapper
   const styleEl = document.createElement('style');
   styleEl.textContent = cssText;
   shadowRoot.appendChild(styleEl);
 
-  // Mount point
   const mount = document.createElement('div');
   mount.className = 'apty-root-mount';
-  // Restore pointer-events inside the container content itself (modals, tooltips, cards)
+  
   mount.style.pointerEvents = 'auto';
   shadowRoot.appendChild(mount);
 

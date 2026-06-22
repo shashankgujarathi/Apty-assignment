@@ -9,14 +9,14 @@ import {
 } from 'lucide-react';
 
 export interface ElementBounds {
-  top: number;    // viewport-relative (getBoundingClientRect().top)
-  left: number;   // viewport-relative
+  top: number;   
+  left: number;   
   width: number;
   height: number;
 }
 
 interface OverlayComponentProps {
-  // Recording States
+
   recordingActive: boolean;
   recordingName: string;
   stepCount: number;
@@ -24,14 +24,12 @@ interface OverlayComponentProps {
   selectedBounds: ElementBounds | null;
   recordingMode: 'capture' | 'interact';
 
-  // Preview States
   previewActive: boolean;
   currentStepIndex: number;
   previewWalkthrough: any;
   previewTargetBounds: ElementBounds | null;
   pathMismatch?: boolean;
 
-  // Actions
   onAddStep: (title: string, description: string, triggerType: string, triggerValue?: string) => void;
   onCancelStepSelection: () => void;
   onSaveWalkthrough: () => void;
@@ -61,7 +59,7 @@ export default function OverlayComponent({
   onClosePreview,
   onChangeRecordingMode,
 }: OverlayComponentProps) {
-  // Step Builder Form states
+
   const [stepTitle, setStepTitle] = useState('');
   const [stepDesc, setStepDesc] = useState('');
   const [stepTrigger, setStepTrigger] = useState('next-button');
@@ -82,27 +80,22 @@ export default function OverlayComponent({
     onAddStep(stepTitle, stepDesc, stepTrigger, stepTriggerVal || undefined);
   };
 
-  // Compute Tooltip absolute style
   const getTooltipStyle = (): React.CSSProperties => {
     if (!previewTargetBounds) return { display: 'none' };
 
     const { top, left, height } = previewTargetBounds;
     const padding = 12;
 
-    // Tooltip size is 300px
     const tooltipWidth = 300;
 
-    // Default: position tooltip below the element
     let tooltipTop = top + height + padding;
     let tooltipLeft = left;
 
-    // Check bounds: if elements is too close to bottom of screen, show above
     const viewportHeight = window.innerHeight;
     if (tooltipTop + 180 > viewportHeight) {
-      tooltipTop = top - 180 - padding; // Approximate tooltip height
+      tooltipTop = top - 180 - padding; 
     }
 
-    // Check bounds: if too far right, align to right side of target
     const viewportWidth = window.innerWidth;
     if (tooltipLeft + tooltipWidth > viewportWidth) {
       tooltipLeft = Math.max(10, viewportWidth - tooltipWidth - 20);
@@ -118,7 +111,7 @@ export default function OverlayComponent({
 
   return (
     <div className="apty-overlay-root">
-      {/* 1. HOVER HIGHLIGHT (Recording mode) */}
+  
       {recordingActive && hoveredBounds && !selectedBounds && (
         <div
           className="apty-element-highlight"
@@ -132,7 +125,6 @@ export default function OverlayComponent({
         />
       )}
 
-      {/* 2. SELECTED TARGET ELEMENT HIGHLIGHT (Recording mode & Preview mode) */}
       {recordingActive && selectedBounds && (
         <div
           className="apty-element-selected"
@@ -159,7 +151,6 @@ export default function OverlayComponent({
         />
       )}
 
-      {/* 3. FLOATING RECORD CONTROL BAR */}
       {recordingActive && (
         <div className="apty-control-bar">
           <div className="apty-control-info">
@@ -203,7 +194,6 @@ export default function OverlayComponent({
         </div>
       )}
 
-      {/* 4. STEP BUILDER MODAL */}
       {recordingActive && selectedBounds && (
         <div className="apty-modal-overlay">
           <form onSubmit={handleStepSubmit} className="apty-modal-content">
@@ -273,7 +263,6 @@ export default function OverlayComponent({
         </div>
       )}
 
-      {/* 5. PREVIEW TOOLTIP CARD */}
       {previewActive && previewWalkthrough && previewTargetBounds && (
         (() => {
           const steps = previewWalkthrough.steps || [];
@@ -333,7 +322,6 @@ export default function OverlayComponent({
         })()
       )}
 
-      {/* 6. PATH MISMATCH REDIRECT PROMPT */}
       {previewActive && pathMismatch && (
         (() => {
           const steps = previewWalkthrough.steps || [];
